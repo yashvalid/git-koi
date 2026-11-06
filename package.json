@@ -1,0 +1,22 @@
+{
+  "name": "koi-github-profile",
+  "version": "1.0.0",
+  "description": "An animated koi fish for your GitHub profile README that evolves its color, size, and activity based on your commits.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node preview/server.js",
+    "generate": "node src/index.js",
+    "test": "node test/test-generator.js"
+  },
+  "keywords": [
+    "github-profile",
+    "readme",
+    "koi",
+    "svg-animation",
+    "git-stats",
+    "github-action"
+  ],
+  "author": "",
+  "license": "MIT"
+}
