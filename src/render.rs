@@ -44,8 +44,8 @@ impl KoiFrame {
         self.rgba_pixels.as_flattened()
     }
 
-    /// Build a frame from chosen pixels, for encoder tests that need colors no koi has.
-    #[cfg(test)]
+    /// Build a frame from chosen pixels, for later stages such as [`crate::space`] and
+    /// for encoder tests that need colors no koi has.
     pub(crate) fn from_rgba_pixels(rgba_pixels: Vec<[u8; 4]>) -> Self {
         Self { rgba_pixels }
     }
@@ -1242,7 +1242,7 @@ fn adjust_saturation(pixel_color: [u8; 4], saturation: f64) -> [u8; 4] {
 }
 
 /// The ordered-dither threshold at a pixel, from zero through one.
-fn calculate_dither_threshold(pixel_position: [u32; 2]) -> f64 {
+pub(crate) fn calculate_dither_threshold(pixel_position: [u32; 2]) -> f64 {
     let dither_x = pixel_position[0] as usize % DITHER_RANKS[0].len();
     let dither_y = pixel_position[1] as usize % DITHER_RANKS.len();
     (f64::from(DITHER_RANKS[dither_y][dither_x]) + 0.5)

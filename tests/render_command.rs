@@ -10,6 +10,7 @@ use git_koi::koi::{KoiDevelopment, derive_koi_development};
 use git_koi::motion::frame_count;
 use git_koi::output::{encode_gif, encode_png};
 use git_koi::render::{KoiFrame, render_koi, render_swim_frame};
+use git_koi::space::paint_space;
 
 const HISTORY_FIXTURE: &str = concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -52,9 +53,12 @@ fn render_writes_the_days_loop_still_and_preview_as_the_renderer_draws_them() {
     let koi_development = derive_koi_development(&account_snapshot).unwrap();
     let behavior = select_behavior(&koi_development);
     assert_eq!(behavior, Behavior::Rest);
-    let swim_frames: Vec<KoiFrame> = (0..frame_count(behavior))
+    let loop_frame_count = frame_count(behavior);
+    let swim_frames: Vec<KoiFrame> = (0..loop_frame_count)
         .map(|frame_index| {
-            render_swim_frame(&koi_development, KoiBody::White, behavior, frame_index)
+            let koi_frame =
+                render_swim_frame(&koi_development, KoiBody::White, behavior, frame_index);
+            paint_space(&koi_frame, f64::from(frame_index) / f64::from(loop_frame_count))
         })
         .collect();
     assert_eq!(
@@ -63,7 +67,7 @@ fn render_writes_the_days_loop_still_and_preview_as_the_renderer_draws_them() {
     );
     assert_eq!(
         fs::read(output_directory.join("koi.png")).unwrap(),
-        encode_png(&render_koi(&koi_development, KoiBody::White)).unwrap()
+        encode_png(&paint_space(&render_koi(&koi_development, KoiBody::White), 0.0)).unwrap()
     );
     let preview_html = fs::read_to_string(output_directory.join("preview.html")).unwrap();
     assert!(preview_html.contains(r#"src="koi.gif""#));
@@ -88,10 +92,11 @@ fn the_body_option_redraws_the_koi_in_that_body() {
     ]);
     assert_eq!(command_output.status.code(), Some(0));
     let koi_development = read_fixture_development();
-    let black_png = encode_png(&render_koi(&koi_development, KoiBody::Black)).unwrap();
+    let black_png =
+        encode_png(&paint_space(&render_koi(&koi_development, KoiBody::Black), 0.0)).unwrap();
     assert_ne!(
         black_png,
-        encode_png(&render_koi(&koi_development, KoiBody::White)).unwrap()
+        encode_png(&paint_space(&render_koi(&koi_development, KoiBody::White), 0.0)).unwrap()
     );
     assert_eq!(
         fs::read(output_directory.join("koi.png")).unwrap(),
