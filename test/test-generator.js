@@ -26,6 +26,8 @@ for (const themeKey of Object.keys(KOI_THEMES)) {
   assert(svg.startsWith('<!-- Koi Fish'), `Generates valid header for theme "${themeKey}"`);
   assert(svg.includes('</svg>'), `Properly closes SVG for theme "${themeKey}"`);
   assert(svg.includes('id="koi-swim-path"'), `Contains swim trajectory for theme "${themeKey}"`);
+  // XML only defines 5 entities; a stray "&" or "&nbsp;" makes browsers/GitHub refuse to render the image
+  assert(!/&(?!(amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/.test(svg), `No invalid XML entities for theme "${themeKey}"`);
 }
 
 // 2. Growth stage and scale scaling tests
